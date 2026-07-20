@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import AuthProvider, { AuthContext } from "./context/AuthContext";
 import ResponseProvider from "./context/ResponseContext";
-import UserDataProvider from "./context/userDataContext";
+import UserDataProvider from "./context/UserDataContext";
 import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
 import QuestionForm from "./components/QuestionForm";

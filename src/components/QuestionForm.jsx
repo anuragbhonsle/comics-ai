@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useContext, useState } from "react";
 import { ResponseContext } from "../context/ResponseContext";
+import dotenv from "dotenv";
 import {
   MoveRightIcon,
   Sparkles,
@@ -13,6 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
+export const API_URL = import.meta.env.VITE_API_URL;
 const GENRES = [
   "Action",
   "Drama",
@@ -92,12 +94,12 @@ Requirements:
       let aiResponse;
       if (authCtx.user) {
         aiResponse = await axios.post(
-          "http://localhost:3000/api/recommend",
+          `${API_URL}/api/recommend`,
           { message: prompt },
           { headers: { Authorization: `Bearer ${authCtx.session.token}` } },
         );
       } else {
-        aiResponse = await axios.post("http://localhost:3000/api/guest", {
+        aiResponse = await axios.post(`${API_URL}/api/guest`, {
           message: prompt,
         });
       }

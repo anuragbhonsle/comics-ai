@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import dotenv from "dotenv";
 import {
   BookOpenText,
   ChevronDown,
@@ -15,6 +16,7 @@ import { UserDataContext } from "../context/userDataContext";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
+export const API_URL = import.meta.env.VITE_API_URL;
 function PanelCorners() {
   return (
     <>
@@ -35,7 +37,7 @@ export default function ChatHistory() {
   async function fetchUserData() {
     try {
       userDataCtx.setUserDataLoading(true);
-      const userdata = await axios.get("http://localhost:3000/api/userdata", {
+      const userdata = await axios.get(`${API_URL}/api/userdata`, {
         headers: {
           Authorization: `Bearer ${authCtx.session.token}`,
         },
