@@ -12,7 +12,7 @@ import {
   Redo2,
 } from "lucide-react";
 import { MarkdownComponent } from "./MarkdownComponent";
-import { UserDataContext } from "../context/userDataContext";
+import { UserDataContext } from "../context/UserDataContext";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
