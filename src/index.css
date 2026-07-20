@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import "@neondatabase/neon-js/ui/tailwind";
+
+:root {
+  --neon-background: oklch(0 0 0);
+  --neon-card: oklch(0 0 0);
+  --neon-foreground: oklch(0.98 0 0);
+  --neon-border: oklch(0.2 0 0);
+  --neon-muted: oklch(0.1 0 0);
+}
+
+html,
+body,
+#root {
+  background-color: oklch(0 0 0);
+  color: oklch(0.98 0 0);
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+}
+html {
+  scrollbar-gutter: stable both-edges;
+}
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b; /* zinc-950 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46; /* zinc-700 */
+  border-radius: 9999px;
+  border: 2px solid #09090b;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b; /* zinc-600 */
+}
