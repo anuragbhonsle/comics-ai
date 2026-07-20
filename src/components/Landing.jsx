@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Sparkles, ArrowRight } from "lucide-react";
-import bg from "../../public/bg.gif";
 
 export default function Landing() {
   const { user } = useContext(AuthContext);
@@ -20,7 +19,7 @@ export default function Landing() {
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `url('${bg}')`,
+          backgroundImage: `url('/bg.gif')`,
           filter: `
       saturate(1.4)
       contrast(1.4)
