@@ -89,17 +89,19 @@ Requirements:
       setSubmitting(true);
       responseCtx.setLoading(true);
       navigate("/library");
-      const aiResponse = await axios.post(
-        "http://localhost:3000/api/recommend",
-        {
+      let aiResponse;
+      if (authCtx.user) {
+        aiResponse = await axios.post(
+          "http://localhost:3000/api/recommend",
+          { message: prompt },
+          { headers: { Authorization: `Bearer ${authCtx.session.token}` } },
+        );
+      } else {
+        aiResponse = await axios.post("http://localhost:3000/api/guest", {
           message: prompt,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authCtx.session.token}`,
-          },
-        },
-      );
+        });
+      }
+
       responseCtx.setResponse(aiResponse.data.reply);
     } catch (error) {
       console.error(error);

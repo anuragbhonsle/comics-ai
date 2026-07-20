@@ -15,6 +15,42 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+app.post("/api/guest", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message) {
+      return res.status(400).json({
+        message: "Message is required",
+      });
+    }
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.1-flash-lite",
+      contents: message,
+    });
+
+    await prisma.chatHistory.create({
+      data: {
+        prompt: message,
+        response: response.text,
+        userId: `guest_${crypto.randomUUID()}`,
+      },
+    });
+
+    res.status(200).json({
+      reply: response.text,
+    });
+  } catch (error) {
+    console.error("Full error:");
+    console.dir(error, { depth: null });
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
 app.post("/api/recommend", authMiddleware, async (req, res) => {
   try {
     const { message } = req.body;

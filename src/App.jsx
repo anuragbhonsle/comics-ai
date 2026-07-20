@@ -1,17 +1,17 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import AuthProvider, { AuthContext } from "./context/AuthContext";
+import ResponseProvider from "./context/ResponseContext";
+import UserDataProvider from "./context/userDataContext";
 import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
 import QuestionForm from "./components/QuestionForm";
 import Response from "./components/Response";
-import { NeonAuthUIProvider } from "@neondatabase/neon-js/auth/react";
 import { authClient } from "./lib/auth";
 import { Auth } from "./components/Auth";
 import { Account } from "./components/Account";
-import AuthProvider, { AuthContext } from "./context/AuthContext";
-import ResponseProvider from "./context/ResponseContext";
 import { useContext } from "react";
-import UserDataProvider from "./context/userDataContext";
 import ChatHistory from "./components/ChatHistory";
+import { NeonAuthUIProvider } from "@neondatabase/neon-js/auth/react/ui";
 
 function MainLayout() {
   return (
