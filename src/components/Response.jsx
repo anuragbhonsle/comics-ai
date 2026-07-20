@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AuthContext } from "../context/AuthContext";
 import { LoaderCircle, Sparkles, BookOpenText } from "lucide-react";
-import { UserDataContext } from "../context/userDataContext";
+import { UserDataContext } from "../context/UserDataContext";
 import axios from "axios";
 import ChatHistory from "./ChatHistory";
 import { MarkdownComponent } from "./MarkdownComponent";
