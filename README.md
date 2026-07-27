@@ -1,6 +1,6 @@
 # 📚 Webcomic AI
 
-An AI-powered webcomic recommendation engine that helps readers find their next obsession. Built with a sleek, dark-themed UI, Webcomic AI analyzes granular preferences, including genre, tone, length, status, and custom prompts, to deliver personalized webcomic suggestions using Google's Gemini AI
+An AI-powered webcomic recommendation engine that helps readers find their next comic. Built with a sleek, dark-themed UI, Webcomic AI analyzes granular preferences, including genre, tone, length, status, and custom prompts, to deliver personalized webcomic suggestions using Google's Gemini AI
 
 🔗 **Live**: [comicsai.vercel.app](https://comicsai.vercel.app/)
 
