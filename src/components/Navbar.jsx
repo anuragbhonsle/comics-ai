@@ -1,9 +1,10 @@
 import { UserButton } from "@neondatabase/neon-js/auth/react";
-import { Kanban } from "lucide-react";
+
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
-import download from "../../public/download.webp";
+
+import { Cat, Home, HomeIcon, Library, Undo2, Zap } from "lucide-react";
 
 export default function Navbar() {
   const authCtx = useContext(AuthContext);
@@ -11,58 +12,58 @@ export default function Navbar() {
 
   const linkClass = (path) => {
     const isActive = location.pathname === path;
-    return `relative text-sm font-medium tracking-wide transition-colors duration-200 py-1 ${
+    return `relative text-sm font-bold tracking-wide transition-colors duration-200 py-1 ${
       isActive ? "text-zinc-100" : "text-zinc-500 hover:text-zinc-300"
     }`;
   };
 
   return (
-    <header className="z-50 fixed top-0 inset-x-0 bg-black shadow-[0_1px_0_rgba(255,255,255,0.08)]">
+    <header className="z-50 fixed top-0 inset-x-0 bg-transparent ">
       {/* 1. Changed "flex justify-between" to "grid grid-cols-3" */}
       <div className="mx-auto grid grid-cols-3 h-16 max-w-7xl items-center px-6">
         {/* 2. Left Column: Wrapped in flex + justify-start */}
         <div className="flex justify-start">
           <Link
             to={authCtx.user ? "/generate" : "/"}
-            className="flex items-center gap-3 group "
+            className="inline-flex flex-row items-center gap-1 group justify-center"
           >
-            <div className="flex h-8 w-8 items-center justify-center bg-[#d21f2f] border-2 border-black text-black transition-transform duration-150 group-hover:-translate-y-px group-hover:translate-x-px">
-              <img src={download} alt="logo" />
-            </div>
-            <span className="text-lg text-zinc-100 tracking-wide font- font-bold">
-              WebComicsAI
+            <Cat
+              color="white"
+              strokeWidth={1.3}
+              className="h-6 w-6 text-white shrink-0"
+            />
+            <span className="text-2xl text-white tracking-widest font-light leading-none">
+              comics.ai
             </span>
           </Link>
         </div>
 
         {/* 3. Middle Column: Added "justify-center" so links are dead-center */}
         <nav className="hidden md:flex justify-center items-center gap-8">
-          {authCtx.user === null && (
-            <Link to="/" className={linkClass("/")}>
-              Home
-              {location.pathname === "/" && (
-                <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-[#d21f2f] " />
-              )}
-            </Link>
-          )}
+          <Link to="/" className={linkClass("/")}>
+            <Home />
+            {location.pathname === "/" && (
+              <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-white " />
+            )}
+          </Link>
 
           <Link to="/generate" className={linkClass("/generate")}>
-            Generate
+            <Zap />
             {location.pathname === "/generate" && (
-              <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-[#d21f2f] " />
+              <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-white " />
             )}
           </Link>
 
           <Link to="/library" className={linkClass("/library")}>
-            Library
+            <Library />
             {location.pathname === "/library" && (
-              <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-[#d21f2f]" />
+              <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-white" />
             )}
           </Link>
           <Link to="/history" className={linkClass("/history")}>
-            History
+            <Undo2 />
             {location.pathname === "/history" && (
-              <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-[#d21f2f]" />
+              <span className="absolute -bottom-px left-0 right-0 h-0.5 bg-white" />
             )}
           </Link>
         </nav>
@@ -72,7 +73,27 @@ export default function Navbar() {
           <UserButton
             variant="ghost"
             size="sm"
-            className="rounded-full text-md font-medium text-white hover:scale-103 transition-all duration-150 hover:border-white hover:bg-red-500 hover:no-underline  flex items-center justify-between cursor-pointer"
+            className="
+    flex cursor-pointer items-center justify-between gap-2
+    rounded-full border border-transparent px-3 py-1.5
+    text-sm font-medium text-white
+    transition-all duration-150
+    hover:scale-105 hover:border-red-400/50 hover:bg-red-400/10 hover:text-red-300
+  "
+            classNames={{
+              trigger: {
+                base: "cursor-pointer",
+              },
+              content: {
+                base: "z-50 min-w-[220px] rounded-xl border border-white/10 bg-neutral-950 text-white shadow-lg",
+                menuItem:
+                  "text-white/80 hover:bg-white/5 hover:text-white rounded-lg cursor-pointer",
+                separator: "bg-white/10",
+              },
+              footer: {
+                base: "border-t border-white/10",
+              },
+            }}
           />
         </div>
       </div>

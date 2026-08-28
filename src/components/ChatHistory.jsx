@@ -1,7 +1,6 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import dotenv from "dotenv";
 import {
   BookOpenText,
   ChevronDown,
@@ -10,6 +9,7 @@ import {
   Maximize2,
   Minimize2,
   Redo2,
+  Undo2,
 } from "lucide-react";
 import { MarkdownComponent } from "./MarkdownComponent";
 import { UserDataContext } from "../context/UserDataContext";
@@ -17,6 +17,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
 export const API_URL = import.meta.env.VITE_API_URL;
+
 function PanelCorners() {
   return (
     <>
@@ -29,70 +30,74 @@ function PanelCorners() {
 }
 
 export default function ChatHistory() {
-  const userDataCtx = useContext(UserDataContext);
-  const authCtx = useContext(AuthContext);
+  const { userData, userDataLoading, setUserData, setUserDataLoading } =
+    useContext(UserDataContext);
+  const { user, session } = useContext(AuthContext);
+
   const [openId, setOpenId] = useState(null);
   const [maxi, setMaxi] = useState(false);
 
-  async function fetchUserData() {
-    try {
-      userDataCtx.setUserDataLoading(true);
-      const userdata = await axios.get(`${API_URL}/api/userdata`, {
-        headers: {
-          Authorization: `Bearer ${authCtx.session.token}`,
-        },
-      });
-      userDataCtx.setUserData(userdata.data);
-      userDataCtx.setUserDataLoading(false);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      userDataCtx.setUserDataLoading(false);
-    }
-  }
+  // Track the previous length to detect when an item is added
+  const prevLengthRef = useRef(userData?.length || 0);
 
-  const displayData = maxi
-    ? userDataCtx.userData
-    : userDataCtx.userData.slice(0, 3);
+  useEffect(() => {
+    const currentLength = userData?.length || 0;
+
+    // Only run if user is logged in AND an item was added (current > previous)
+    // Or on initial mount if userData is empty
+    if (!user || !session?.token) return;
+
+    if (currentLength > prevLengthRef.current || currentLength === 0) {
+      async function fetchUserData() {
+        try {
+          setUserDataLoading(true);
+          const response = await axios.get(`${API_URL}/api/userdata`, {
+            headers: {
+              Authorization: `Bearer ${session.token}`,
+            },
+          });
+          setUserData(response.data);
+        } catch (err) {
+          console.error("Failed to fetch user data:", err);
+        } finally {
+          setUserDataLoading(false);
+        }
+      }
+
+      fetchUserData();
+    }
+
+    // Update ref to track current length for next render
+    prevLengthRef.current = currentLength;
+  }, [userData?.length, user, session?.token, setUserData, setUserDataLoading]);
+
+  const displayData = maxi ? userData : userData?.slice(0, 3);
 
   return (
-    // page wrapper — mirrors Response.jsx so both routes align under the navbar the same way
     <div className="min-h-screen w-full bg-black px-4 pb-16 pt-20 sm:px-6">
-      <div className="relative mx-auto w-full max-w-3xl rounded-2xl border border-zinc-800 bg-black p-6 shadow-[0_0_60px_-15px_rgba(239,68,68,0.15)] sm:p-8">
-        <PanelCorners />
-
+      <div className="relative mx-auto w-full max-w-3xl rounded-2xl  bg-black p-6  sm:p-8">
         <div className="mb-6 flex items-center justify-between border-b border-zinc-900 pb-5">
           <div>
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-500">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-400">
               <BookOpenText className="h-3 w-3" />
               History
             </span>
-            <h1 className="mt-2 font-mono text-xl font-bold text-white sm:text-2xl">
+            <h1 className="mt-2  text-xl font-bold text-white sm:text-2xl">
               Previous Recommendations
             </h1>
           </div>
-          <Redo2 className="hidden h-6 w-6 text-zinc-700 sm:block" />
+          <Undo2 className="hidden h-6 w-6 text-zinc-700 sm:block" />
         </div>
 
-        {authCtx.user ? (
+        {user ? (
           <div className="flex flex-col items-center gap-2 py-4 text-center">
-            <p className="text-white font-bold font-mono text-2xl">
-              Fetch User Data
-            </p>
-            <button
-              disabled={userDataCtx.userDataLoading}
-              className="group mt-2 flex w-30 items-center justify-center rounded-full bg-red-500 py-3 text-sm font-semibold text-white transition-all duration-150 hover:scale-[1.01] hover:bg-red-400 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
-              onClick={fetchUserData}
-            >
-              {userDataCtx.userDataLoading ? "Fetching..." : "Fetch"}
-            </button>
-            {userDataCtx.userDataLoading === true && (
-              <Loader2 className="h-8 w-8 text-red-500 animate-spin m-2" />
+            {userDataLoading && (
+              <Loader2 className="m-2 h-8 w-8 animate-spin text-red-400" />
             )}
           </div>
         ) : (
           <div className="flex flex-col items-center gap-2 py-16 text-center">
-            <p className="font-mono text-xl font-semibold text-zinc-200 sm:text-2xl">
+            <p className=" text-xl font-semibold text-zinc-200 sm:text-2xl">
               Guest mode.
             </p>
             <p className="text-sm text-zinc-500">
@@ -101,7 +106,7 @@ export default function ChatHistory() {
           </div>
         )}
 
-        {userDataCtx.userData?.length > 0 && (
+        {userData?.length > 0 && (
           <div className="space-y-4">
             {displayData?.map((chat) => {
               const isOpen = openId === chat.id;
@@ -123,9 +128,9 @@ export default function ChatHistory() {
                     </div>
 
                     {isOpen ? (
-                      <Minimize2 className="text-red-500" />
+                      <Minimize2 className="text-red-400" />
                     ) : (
-                      <Maximize2 className="text-red-500" />
+                      <Maximize2 className="text-red-400" />
                     )}
                   </button>
 
@@ -142,16 +147,16 @@ export default function ChatHistory() {
                 </div>
               );
             })}
-            {userDataCtx.userData.length > 3 && (
+            {userData.length > 3 && (
               <div className="flex items-center justify-center">
                 {maxi ? (
                   <ChevronUp
-                    className="h-8 w-8 text-red-500 cursor-pointer hover:scale-105"
+                    className="h-8 w-8 cursor-pointer text-red-400 hover:scale-105"
                     onClick={() => setMaxi((prev) => !prev)}
                   />
                 ) : (
                   <ChevronDown
-                    className="h-8 w-8 text-red-500 cursor-pointer hover:scale-105"
+                    className="h-8 w-8 cursor-pointer text-red-400 hover:scale-105"
                     onClick={() => setMaxi((prev) => !prev)}
                   />
                 )}

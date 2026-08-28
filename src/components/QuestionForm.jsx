@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useContext, useState } from "react";
 import { ResponseContext } from "../context/ResponseContext";
-import dotenv from "dotenv";
+
 import {
   MoveRightIcon,
   Sparkles,
@@ -67,24 +67,32 @@ export default function QuestionForm() {
     e.preventDefault();
 
     const prompt = `
-Recommend web comics based on the following preferences.
+You are an expert comic, manga, and webtoon recommendation system.
 
-Genre: ${formData.genre || "Any"}
-Tone: ${formData.tone || "Any"}
-Status: ${formData.status || "Any"}
-Length: ${formData.length || "Any"}
-Release Period: ${formData.release || "Any"}
+Suggest up to 3 web comics tailored precisely to the user's criteria.
 
-Additional Preferences:
-${formData.extra || "None"}
+--- USER PREFERENCES ---
+- Primary Genre: ${formData.genre || "Any"}
+- Tone & Vibe: ${formData.tone || "Any"}
+- Publication Status: ${formData.status || "Any (Ongoing / Completed)"}
+- Length Expectation: ${formData.length || "Any"}
+- Release Period / Era: ${formData.release || "Any"}
+- Additional Requests: ${formData.extra || "None"}
 
-Requirements:
-- Recommend at most 5 web comics.
-- Explain why each recommendation matches.
-- Mention genres.
-- Mention whether it is ongoing or completed.
-- Mention approximate chapter count.
-- Keep each description concise.
+--- OUTPUT FORMAT REQUIREMENTS ---
+For each comic (maximum 3), use the exact structure below:
+
+### 1. [Title]
+- **Genres:** [Genre 1, Genre 2]
+- **Status & Length:** [Ongoing / Completed] | ~[X] Chapters
+- **Why It Matches:** [2-3 sentences max explaining directly how it satisfies the user's specific genre, tone, and extra preferences.]
+- **Where to Read:** [Official platforms, e.g., WEBTOON, Tapas, Lezhin]
+
+--- SYSTEM INSTRUCTIONS ---
+1. Quality Over Quantity: Only output titles that strictly exist and genuinely match the criteria.
+2. No Spoilers: Keep descriptions centered around premise, character dynamics, and atmosphere.
+3. Tone Match: Prioritize matching the requested tone and extra details over generic popularity.
+4. Concise & Readable: Keep formatting clean with zero unnecessary preamble or postscript.
 `;
 
     try {
@@ -124,7 +132,7 @@ Requirements:
 
   const fieldWrap = "group relative";
   const labelStyle =
-    "mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 transition-colors group-focus-within:text-red-500";
+    "mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 transition-colors group-focus-within:text-red-400";
   const selectStyle =
     "peer w-full h-11 appearance-none rounded-lg border border-zinc-800 bg-zinc-950 pl-3 pr-9 text-sm text-white outline-none transition-colors duration-150 hover:border-zinc-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/20";
 
@@ -145,7 +153,7 @@ Requirements:
           ))}
         </select>
         <svg
-          className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 transition-colors peer-focus:text-red-500"
+          className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 transition-colors peer-focus:text-red-400"
           viewBox="0 0 12 12"
           fill="none"
         >
@@ -165,20 +173,14 @@ Requirements:
     <div className="pt-20 flex min-h-screen w-full items-center justify-center bg-black px-4 py-10">
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-4xl rounded-2xl border border-zinc-800 bg-black p-6 shadow-[0_0_60px_-15px_rgba(239,68,68,0.15)] sm:p-8"
+        className="relative w-full max-w-4xl rounded-2xl  bg-black p-6  sm:p-8"
       >
-        {/* comic-panel corner marks — signature detail */}
-        <span className="pointer-events-none absolute left-3 top-3 h-4 w-4 border-l-2 border-t-2 border-red-500/70 rounded-tl-sm" />
-        <span className="pointer-events-none absolute right-3 top-3 h-4 w-4 border-r-2 border-t-2 border-red-500/70 rounded-tr-sm" />
-        <span className="pointer-events-none absolute bottom-3 left-3 h-4 w-4 border-b-2 border-l-2 border-red-500/70 rounded-bl-sm" />
-        <span className="pointer-events-none absolute bottom-3 right-3 h-4 w-4 border-b-2 border-r-2 border-red-500/70 rounded-br-sm" />
-
         <div className="mb-4">
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-500">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-400">
             <Sparkles className="h-3 w-3" />
             Panel Picks
           </span>
-          <h1 className="mt-2 font-mono text-md font-bold text-white sm:text-2xl">
+          <h1 className="mt-2  text-md font-bold text-white sm:text-2xl">
             Find Your Next Web Comic
           </h1>
           <p className="mt-2 text-sm text-zinc-400 sm:text-base">
@@ -250,7 +252,7 @@ Requirements:
 
         <div className="group relative mt-5">
           <div className="mb-2 flex items-center justify-between">
-            <label className="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 transition-colors group-focus-within:text-red-500">
+            <label className="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 transition-colors group-focus-within:text-red-400">
               Additional Preferences
             </label>
             <span className="text-[11px] text-zinc-600">
@@ -264,7 +266,7 @@ Requirements:
             value={formData.extra}
             onChange={handleChange}
             placeholder="Example: Similar to Lookism, overpowered main character, amazing fights, little romance..."
-            className="w-full resize-none rounded-xl border bg-zinc-950 px-4 py-3 text-sm outline-none transition-colors duration-150 placeholder:text-zinc-600 hover:border-zinc-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+            className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm outline-none transition-colors duration-150 placeholder:text-zinc-600 hover:border-zinc-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 text-zinc-100"
           />
         </div>
 

@@ -32,19 +32,17 @@ function App() {
             emailOTP
             authClient={authClient}
             defaultTheme="dark"
-            className="bg-black"
           >
             <BrowserRouter>
               <Routes>
                 <Route element={<MainLayout />}>
+                  <Route path="/" element={<Landing />} />
                   <Route path="/generate" element={<QuestionForm />} />
                   <Route path="/library" element={<Response />} />
                   <Route path="/history" element={<ChatHistory />} />
                   <Route path="/auth/:pathname" element={<Auth />} />
                   <Route path="/account/:pathname" element={<Account />} />
                 </Route>
-
-                <Route path="/" element={<Landing />} />
               </Routes>
             </BrowserRouter>
           </NeonAuthUIProvider>
