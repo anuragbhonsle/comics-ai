@@ -19,10 +19,9 @@ export function Auth() {
           [&_label]:text-xs [&_label]:font-medium [&_label]:text-white/70
 
           [&_input]:w-full [&_input]:rounded-md [&_input]:border [&_input]:border-white/15
-          [&_input]:bg-white/5 [&_input]:px-2.5 [&_input]:py-1.5 [&_input]:text-xs
+          [&_input]:bg-white/5 [&_input]:px-3.5 [&_input]:py-2.5 [&_input]:text-xs
           [&_input]:text-white [&_input]:placeholder-white/30 [&_input]:outline-none
           [&_input]:transition-colors [&_input:focus]:border-red-400
-
 
           [&_button]:w-full [&_button]:cursor-pointer [&_button]:rounded-md
           [&_button]:text-xs [&_button]:font-semibold [&_button]:transition-colors

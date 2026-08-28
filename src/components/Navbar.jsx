@@ -85,7 +85,7 @@ export default function Navbar() {
                 base: "cursor-pointer",
               },
               content: {
-                base: "z-50 min-w-[220px] rounded-xl border border-white/10 bg-neutral-950 text-white shadow-lg",
+                base: "z-50 min-w-[220px] rounded-xl border border-white/10 bg-neutral-950 text-white shadow-lg p-2",
                 menuItem:
                   "text-white/80 hover:bg-white/5 hover:text-white rounded-lg cursor-pointer",
                 separator: "bg-white/10",
