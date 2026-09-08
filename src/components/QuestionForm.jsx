@@ -1,7 +1,8 @@
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import { ResponseContext } from "../context/ResponseContext";
-
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import {
   MoveRightIcon,
   Sparkles,
@@ -10,11 +11,11 @@ import {
   Ruler,
   CalendarClock,
   PenLine,
+  Loader2,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
 
 export const API_URL = import.meta.env.VITE_API_URL;
+
 const GENRES = [
   "Action",
   "Drama",
@@ -55,12 +56,23 @@ export default function QuestionForm() {
     extra: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const textareaRef = useRef(null);
+
   const navigate = useNavigate();
   const responseCtx = useContext(ResponseContext);
   const authCtx = useContext(AuthContext);
+
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleTextareaChange(e) {
+    handleChange(e);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
   }
 
   async function handleSubmit(e) {
@@ -104,7 +116,7 @@ For each comic (maximum 3), use the exact structure below:
         aiResponse = await axios.post(
           `${API_URL}/api/recommend`,
           { message: prompt },
-          { headers: { Authorization: `Bearer ${authCtx.session.token}` } },
+          { headers: { Authorization: `Bearer ${authCtx.session?.token}` } },
         );
       } else {
         aiResponse = await axios.post(`${API_URL}/api/guest`, {
@@ -116,7 +128,6 @@ For each comic (maximum 3), use the exact structure below:
     } catch (error) {
       console.error(error);
     } finally {
-      console.log(authCtx.user);
       responseCtx.setLoading(false);
       setSubmitting(false);
     }
@@ -132,7 +143,7 @@ For each comic (maximum 3), use the exact structure below:
 
   const fieldWrap = "group relative";
   const labelStyle =
-    "mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 transition-colors group-focus-within:text-red-400";
+    "mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 transition-colors group-focus-within:text-red-500";
   const selectStyle =
     "peer w-full h-11 appearance-none rounded-lg border border-zinc-800 bg-zinc-950 pl-3 pr-9 text-sm text-white outline-none transition-colors duration-150 hover:border-zinc-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/20";
 
@@ -153,7 +164,7 @@ For each comic (maximum 3), use the exact structure below:
           ))}
         </select>
         <svg
-          className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 transition-colors peer-focus:text-red-400"
+          className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500 transition-colors peer-focus:text-red-500"
           viewBox="0 0 12 12"
           fill="none"
         >
@@ -173,22 +184,22 @@ For each comic (maximum 3), use the exact structure below:
     <div className="pt-20 flex min-h-screen w-full items-center justify-center bg-black px-4 py-10">
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-4xl rounded-2xl  bg-black p-6  sm:p-8"
+        className="relative w-full max-w-4xl rounded-2xl border border-zinc-800/60 bg-zinc-950/40 p-6 sm:p-8"
       >
-        <div className="mb-4">
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-400">
+        <div className="mb-6">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-500">
             <Sparkles className="h-3 w-3" />
             Panel Picks
           </span>
-          <h1 className="mt-2  text-md font-bold text-white sm:text-2xl">
+          <h1 className="mt-2 text-xl font-bold text-white sm:text-2xl">
             Find Your Next Web Comic
           </h1>
-          <p className="mt-2 text-sm text-zinc-400 sm:text-base">
+          <p className="mt-1 text-sm text-zinc-400">
             Choose your preferences and let AI recommend something you'll love.
           </p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className={fieldWrap}>
             <label className={labelStyle}>
               <Palette className="h-3 w-3" /> Genre
@@ -252,32 +263,40 @@ For each comic (maximum 3), use the exact structure below:
 
         <div className="group relative mt-5">
           <div className="mb-2 flex items-center justify-between">
-            <label className="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 transition-colors group-focus-within:text-red-400">
+            <label className="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500 transition-colors group-focus-within:text-red-500">
               Additional Preferences
             </label>
-            <span className="text-[11px] text-zinc-600">
+            <span className="text-[11px] text-zinc-600 font-mono">
               {formData.extra.length}/300
             </span>
           </div>
           <textarea
+            ref={textareaRef}
             name="extra"
-            rows={1}
+            rows={2}
             maxLength={300}
             value={formData.extra}
-            onChange={handleChange}
+            onChange={handleTextareaChange}
             placeholder="Example: Similar to Lookism, overpowered main character, amazing fights, little romance..."
-            className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm outline-none transition-colors duration-150 placeholder:text-zinc-600 hover:border-zinc-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 text-zinc-100"
+            className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none transition-colors hover:border-zinc-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
           />
         </div>
 
         <button
           type="submit"
           disabled={submitting}
-          className="group mt-6 flex w-full items-center justify-center rounded-full bg-red-500 py-3 text-sm font-semibold text-white transition-all duration-150 hover:scale-[1.01] hover:bg-red-400 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+          className="group mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-red-600 py-3 text-sm font-semibold text-white transition-all hover:bg-red-600 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {submitting ? "Finding your comics…" : "Recommend Web Comics"}
-          {!submitting && (
-            <MoveRightIcon className="ml-2 inline-block h-4 w-4 align-middle transition-transform duration-200 group-hover:translate-x-1" />
+          {submitting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin text-white" />
+              <span>Finding your comics…</span>
+            </>
+          ) : (
+            <>
+              <span>Recommend Web Comics</span>
+              <MoveRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </>
           )}
         </button>
       </form>

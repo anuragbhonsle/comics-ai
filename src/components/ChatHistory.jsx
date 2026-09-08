@@ -8,7 +8,6 @@ import {
   Loader2,
   Maximize2,
   Minimize2,
-  Redo2,
   Undo2,
 } from "lucide-react";
 import { MarkdownComponent } from "./MarkdownComponent";
@@ -18,17 +17,6 @@ import { AuthContext } from "../context/AuthContext";
 
 export const API_URL = import.meta.env.VITE_API_URL;
 
-function PanelCorners() {
-  return (
-    <>
-      <span className="pointer-events-none absolute left-3 top-3 h-4 w-4 rounded-tl-sm border-l-2 border-t-2 border-red-500/70" />
-      <span className="pointer-events-none absolute right-3 top-3 h-4 w-4 rounded-tr-sm border-r-2 border-t-2 border-red-500/70" />
-      <span className="pointer-events-none absolute bottom-3 left-3 h-4 w-4 rounded-bl-sm border-b-2 border-l-2 border-red-500/70" />
-      <span className="pointer-events-none absolute bottom-3 right-3 h-4 w-4 rounded-br-sm border-b-2 border-r-2 border-red-500/70" />
-    </>
-  );
-}
-
 export default function ChatHistory() {
   const { userData, userDataLoading, setUserData, setUserDataLoading } =
     useContext(UserDataContext);
@@ -37,14 +25,11 @@ export default function ChatHistory() {
   const [openId, setOpenId] = useState(null);
   const [maxi, setMaxi] = useState(false);
 
-  // Track the previous length to detect when an item is added
   const prevLengthRef = useRef(userData?.length || 0);
 
   useEffect(() => {
     const currentLength = userData?.length || 0;
 
-    // Only run if user is logged in AND an item was added (current > previous)
-    // Or on initial mount if userData is empty
     if (!user || !session?.token) return;
 
     if (currentLength > prevLengthRef.current || currentLength === 0) {
@@ -67,103 +52,123 @@ export default function ChatHistory() {
       fetchUserData();
     }
 
-    // Update ref to track current length for next render
     prevLengthRef.current = currentLength;
   }, [userData?.length, user, session?.token, setUserData, setUserDataLoading]);
 
   const displayData = maxi ? userData : userData?.slice(0, 3);
 
   return (
-    <div className="min-h-screen w-full bg-black px-4 pb-16 pt-20 sm:px-6">
-      <div className="relative mx-auto w-full max-w-3xl rounded-2xl  bg-black p-6  sm:p-8">
-        <div className="mb-6 flex items-center justify-between border-b border-zinc-900 pb-5">
+    <div className="pt-20 flex min-h-screen w-full justify-center bg-black px-4 py-10">
+      <div className="relative w-full max-w-4xl rounded-2xl border border-zinc-800/60 bg-zinc-950/40 p-6 sm:p-8">
+        {/* Header matched to QuestionForm and Response */}
+        <div className="mb-6 flex items-start justify-between">
           <div>
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-400">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-red-500">
               <BookOpenText className="h-3 w-3" />
               History
             </span>
-            <h1 className="mt-2  text-xl font-bold text-white sm:text-2xl">
+            <h1 className="mt-2 text-xl font-bold text-white sm:text-2xl">
               Previous Recommendations
             </h1>
+            <p className="mt-1 text-sm text-zinc-400">
+              {user
+                ? "Browse your saved AI recommendation prompts and results."
+                : "Sign in to view your saved history."}
+            </p>
           </div>
           <Undo2 className="hidden h-6 w-6 text-zinc-700 sm:block" />
         </div>
 
-        {user ? (
-          <div className="flex flex-col items-center gap-2 py-4 text-center">
-            {userDataLoading && (
-              <Loader2 className="m-2 h-8 w-8 animate-spin text-red-400" />
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-2 py-16 text-center">
-            <p className=" text-xl font-semibold text-zinc-200 sm:text-2xl">
-              Guest mode.
-            </p>
-            <p className="text-sm text-zinc-500">
-              Sign in to view your past recommendations here.
-            </p>
-          </div>
-        )}
+        <div className="border-t border-zinc-900 pt-6">
+          {userDataLoading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-red-500" />
+              <p className="mt-3 text-sm text-zinc-500">
+                Loading your history…
+              </p>
+            </div>
+          ) : !user ? (
+            <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+              <p className="text-lg font-semibold text-zinc-300 sm:text-xl">
+                Guest mode.
+              </p>
+              <p className="text-sm text-zinc-500">
+                Sign in to view your past recommendations here.
+              </p>
+            </div>
+          ) : userData?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+              <p className="text-lg font-semibold text-zinc-300 sm:text-xl">
+                No saved history yet.
+              </p>
+              <p className="text-sm text-zinc-500">
+                Generated recommendations will appear here automatically.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {displayData?.map((chat) => {
+                const isOpen = openId === chat.id;
 
-        {userData?.length > 0 && (
-          <div className="space-y-4">
-            {displayData?.map((chat) => {
-              const isOpen = openId === chat.id;
-
-              return (
-                <div
-                  key={chat.id}
-                  className="rounded-xl border border-zinc-800"
-                >
-                  <button
-                    onClick={() => setOpenId(isOpen ? null : chat.id)}
-                    className="flex w-full items-center justify-between px-4 py-4 text-left hover:bg-zinc-950"
+                return (
+                  <div
+                    key={chat.id}
+                    className="overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-950/60 transition-all hover:border-zinc-700"
                   >
-                    <div>
-                      <p className="text-xs text-zinc-500">Prompt</p>
-                      <p className="line-clamp-1 font-semibold text-zinc-200">
-                        {chat.prompt}
-                      </p>
-                    </div>
+                    <button
+                      onClick={() => setOpenId(isOpen ? null : chat.id)}
+                      className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-zinc-900/50"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                          Prompt
+                        </p>
+                        <p className="mt-0.5 line-clamp-1 text-sm font-medium text-zinc-200">
+                          {chat.prompt}
+                        </p>
+                      </div>
 
-                    {isOpen ? (
-                      <Minimize2 className="text-red-400" />
+                      <div className="shrink-0 text-red-500">
+                        {isOpen ? (
+                          <Minimize2 className="h-4 w-4" />
+                        ) : (
+                          <Maximize2 className="h-4 w-4" />
+                        )}
+                      </div>
+                    </button>
+
+                    {isOpen && (
+                      <div className="border-t border-zinc-900 bg-zinc-950/90 p-5 text-sm leading-relaxed text-zinc-200">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={MarkdownComponent}
+                        >
+                          {chat.response}
+                        </ReactMarkdown>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {userData?.length > 3 && (
+                <div className="pt-2 flex justify-center">
+                  <button
+                    onClick={() => setMaxi((prev) => !prev)}
+                    className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-red-500 hover:text-red-300 transition-colors"
+                  >
+                    <span>{maxi ? "Show Less" : "Show All"}</span>
+                    {maxi ? (
+                      <ChevronUp className="h-4 w-4" />
                     ) : (
-                      <Maximize2 className="text-red-400" />
+                      <ChevronDown className="h-4 w-4" />
                     )}
                   </button>
-
-                  {isOpen && (
-                    <div className="border-t border-zinc-900 p-5 text-lg font-semibold leading-relaxed text-zinc-200">
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={MarkdownComponent}
-                      >
-                        {chat.response}
-                      </ReactMarkdown>
-                    </div>
-                  )}
                 </div>
-              );
-            })}
-            {userData.length > 3 && (
-              <div className="flex items-center justify-center">
-                {maxi ? (
-                  <ChevronUp
-                    className="h-8 w-8 cursor-pointer text-red-400 hover:scale-105"
-                    onClick={() => setMaxi((prev) => !prev)}
-                  />
-                ) : (
-                  <ChevronDown
-                    className="h-8 w-8 cursor-pointer text-red-400 hover:scale-105"
-                    onClick={() => setMaxi((prev) => !prev)}
-                  />
-                )}
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

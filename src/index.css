@@ -1,5 +1,6 @@
 @import url("https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap");
 @import "tailwindcss";
+@import "@neondatabase/auth-ui/tailwind";
 
 @theme {
   --font-sans:
@@ -32,18 +33,65 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar styles */
+/* Scrollbar styles - Pitch Black Theme */
 ::-webkit-scrollbar {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #27272a;
   border-radius: 9999px;
-  border: 2px solid #09090b;
+  border: 2px solid #000000;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+  background: #3f3f46;
+}
+
+/* Firefox scrollbar support */
+* {
+  scrollbar-color: #27272a #000000;
+  scrollbar-width: thin;
+}
+@keyframes footer-smoke-1 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-40px, -30px, 0) scale(1.08);
+  }
+}
+
+@keyframes footer-smoke-2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(35px, -45px, 0) scale(1.1);
+  }
+}
+
+@keyframes footer-smoke-3 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-25px, 35px, 0) scale(1.12);
+  }
+}
+
+.footer-smoke-1 {
+  animation: footer-smoke-1 8s ease-in-out infinite;
+}
+
+.footer-smoke-2 {
+  animation: footer-smoke-2 6s ease-in-out infinite 1.5s;
+}
+
+.footer-smoke-3 {
+  animation: footer-smoke-3 10s ease-in-out infinite 3s;
 }

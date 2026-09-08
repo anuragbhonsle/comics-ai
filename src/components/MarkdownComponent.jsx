@@ -28,29 +28,29 @@ export const MarkdownComponent = {
   p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
 
   h1: ({ children }) => (
-    <h2 className="mt-8 mb-4 border-b border-zinc-900 pb-2 text-2xl font-bold text-red-400">
+    <h2 className="mt-8 mb-4 border-b border-zinc-900 pb-2 text-2xl font-bold text-red-500">
       {children}
     </h2>
   ),
 
   h2: ({ children }) => (
-    <h2 className="mt-8 mb-4 border-b border-zinc-900 pb-2 text-xl font-bold text-red-400">
+    <h2 className="mt-8 mb-4 border-b border-zinc-900 pb-2 text-xl font-bold text-red-500">
       {children}
     </h2>
   ),
 
   h3: ({ children }) => (
-    <h3 className="mt-6 mb-3 text-lg font-semibold text-red-400">{children}</h3>
+    <h3 className="mt-6 mb-3 text-lg font-semibold text-red-500">{children}</h3>
   ),
 
   ul: ({ children }) => (
-    <ul className="mb-4 list-disc space-y-2 pl-6 marker:text-red-400/70">
+    <ul className="mb-4 list-disc space-y-2 pl-6 marker:text-red-500/70">
       {children}
     </ul>
   ),
 
   ol: ({ children }) => (
-    <ol className="mb-4 list-decimal space-y-2 pl-6 marker:text-red-400/70">
+    <ol className="mb-4 list-decimal space-y-2 pl-6 marker:text-red-500/70">
       {children}
     </ol>
   ),

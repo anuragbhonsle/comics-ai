@@ -19,3 +19,9 @@ model ChatHistory {
   createdAt DateTime @default(now())
   userId    String
 }
+
+model Contact {
+  id        String   @id @default(cuid())
+  email    String
+  createdAt DateTime @default(now())
+}

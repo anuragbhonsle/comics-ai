@@ -15,6 +15,14 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Server is alive and running",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.post("/api/guest", async (req, res) => {
   try {
     const { message } = req.body;
@@ -104,6 +112,43 @@ app.get("/api/userdata", authMiddleware, async (req, res) => {
 
     res.status(500).json({
       message: error.message,
+    });
+  }
+});
+
+app.post("/api/contact", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        error: "Email is required to join newsletter",
+      });
+    }
+
+    const newContact = await prisma.contact.create({
+      data: {
+        email,
+      },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Successfully subscribed to the newsletter!",
+      contact: newContact,
+    });
+  } catch (error) {
+    console.error("Full error:");
+    console.dir(error, { depth: null });
+
+    if (error.code === "P2002") {
+      return res.status(409).json({
+        error: "This email is already subscribed.",
+      });
+    }
+
+    return res.status(500).json({
+      message: error.message || "Internal server error",
     });
   }
 });
